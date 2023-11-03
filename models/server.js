@@ -4,6 +4,9 @@ import { db } from "../database/connection.js"
 import  { routerUser } from "../routes/user.js"
 import fileUpload from "express-fileupload";
 import { routerRole } from "../routes/role.js";
+import { routerAuth } from "../routes/auth.js";
+import { routerPatient } from "../routes/patient.js";
+import { routerApoiment } from "../routes/appoiment.js";
 
 const whiteList = ['http://localhost:3000'];
 const corsOptions = {
@@ -25,8 +28,10 @@ class Server {
         this.port = process.env.PORT;
         this.patientPath = '/api/patient'
         this.rolePath = '/api/role'
+        this.appoimentPath = '/api/appoiment'
         this.userPath = '/api/user'
         this.livingPath = '/api/livingPlace'
+        this.authPath = '/api/auth';
 
         //Conexion a bd
         this.dbConnection();
@@ -67,15 +72,13 @@ class Server {
     }
 
     routes() {
-/* 
-        this.app.use('/api', routerUser); */
+        
         this.app.use(this.userPath, routerUser)
-        /* this.app.use('/api', routerRole); */
         this.app.use(this.rolePath, routerRole)
-       /*  this.app.use(this.patientPath, require('../routes/patient'))
-        this.app.use(this.rolePath, require('../routes/role')) */
-       
-       /*  this.app.use(this.livingPath, require('../routes/livingPlace')) */
+        this.app.use(this.authPath, routerAuth)
+        this.app.use(this.patientPath, routerPatient)
+        this.app.use(this.appoimentPath, routerApoiment)
+     
     }
 
     listen() {

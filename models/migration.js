@@ -7,13 +7,13 @@ import { User } from "./User.js";
 import { UserPatient } from "./UserPatient.js";
 
 (async () => {
-/* 
+
     await Role.sync();
     await Appoinment.sync({ force: true });
     await LivingPlace.sync();
     await Patient.sync();
     await User.sync();
-    await UserPatient.sync(); */
+    await UserPatient.sync(); 
 
     await db.sync({ force: true});
   

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { patientGet, patientPost, patientPut, patientDelete } from "../controllers/patient"
+import { patientGet, patientPost, patientPut, patientDelete } from "../controllers/patient.js"
 
 const router = Router();
 
@@ -13,4 +13,4 @@ router.put('/:pk', patientPut);
 router.delete('/:pk', patientDelete);
 
 
-export {router};
+export {router  as routerPatient };

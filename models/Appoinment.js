@@ -13,18 +13,8 @@ export default (db, DataTypes) => {
         primaryKey: true,
       },
 
-      date_next_appoinment: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-
-      appoinment_time: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-
-      pk_role: {
-        type: DataTypes.INTEGER,
+      next_appoinment: {
+        type: DataTypes.DATE,
         allowNull: false,
       },
 

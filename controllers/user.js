@@ -2,7 +2,6 @@ import { response, request } from "express";
 import { Op } from "sequelize";
 import { User } from "../models/User.js";
 
-
 const userGet = async (req = request, res = response) => {
   let { search, pagina = 1, limite = 5 } = req.query;
 
@@ -32,31 +31,31 @@ const userGet = async (req = request, res = response) => {
 
       where: {
         pk_user: {
-          [Op.like]: '%'+search+'%'
-        }
+          [Op.like]: "%" + search + "%",
+        },
       },
-      attributes: ["pk_user", "name_user",
-      "user",
-      "password",
-      "email",
-      "phone",
-      "pk_role"
+      attributes: [
+        "pk_user",
+        "name_user",
+        "user",
+        "password",
+        "email",
+        "phone",
+        "pk_role",
       ],
     });
 
-    const count = await User.count(
-      {
-        where: {
-          pk_user: {
-            [Op.like]: '%'+search+'%'
-          }
-        }
-      }
-    )
+    const count = await User.count({
+      where: {
+        pk_user: {
+          [Op.like]: "%" + search + "%",
+        },
+      },
+    });
     res.json({
-      users, 
+      users,
       cantidad: count,
-      totalPaginas: Math.ceil(count/size)
+      totalPaginas: Math.ceil(count / size),
     });
   } catch (error) {
     res.status(500).json({ msg: "Error no controlado" });
@@ -65,31 +64,22 @@ const userGet = async (req = request, res = response) => {
 
 const userPost = async (req, res = response) => {
   //const body = req.body;
-  const {
-    name_user,
-    user,
-    password,
-    email,
-    phone,
-    pk_role
-  
-  } = req.body;
+  const { name_user, user, password, email, phone, pk_role } = req.body;
 
   try {
     const users = new User({
-        name_user,
-        user,
-        password,
-        email,
-        phone,
-        pk_role
-
+      name_user,
+      user,
+      password,
+      email,
+      phone,
+      pk_role,
     });
 
     //guardar paciente en la BD
-    await User.save();
+    await users.save();
     res.json({
-      msg: "paciente creado correctamente",
+      msg: "usuario creado correctamente",
       users,
     });
   } catch (error) {
@@ -97,25 +87,19 @@ const userPost = async (req, res = response) => {
       msg: "Algo salió mal",
       error,
     });
+    console.log("hola ", error);
   }
 };
 
 const userPut = async (req = request, res = response) => {
   const pk = req.params.pk;
-  const {
-    name_user,
-    user,
-    password,
-    email,
-    phone,
-    pk_role
-  } = req.body;
+  const { name_user, user, password, email, phone, pk_role } = req.body;
 
   try {
     // Busca el rol por su id
-    const users = await User.findByPk(pk);
+    const _user = await User.findByPk(pk);
 
-    if (!users) {
+    if (!_user) {
       return res.status(404).json({
         msg: "No se encontró el usuario.",
       });
@@ -123,24 +107,25 @@ const userPut = async (req = request, res = response) => {
 
     // Actualiza la información del rol con el método update
 
-    await User.update({
-        name_user,
-        user,
-        password,
-        email,
-        phone,
-        pk_role
+    await _user.update({
+      name_user,
+      user,
+      password,
+      email,
+      phone,
+      pk_role,
     });
 
     res.json({
-      msg: "Asociado actualizado",
-      users,
+      msg: "usuario actualizado",
+      user: _user,
     });
   } catch (error) {
     res.status(500).json({
       msg: "Ocurrió un error al intentar actualizar el usuario.",
       error,
     });
+    console.log("KRISHNAA", error);
   }
 };
 
@@ -152,11 +137,11 @@ const userDelete = async (req, res = response) => {
       // Si se encontró el asociado, procede a eliminarlo.
       await users.destroy(); // Utiliza el método destroy para eliminar el usuario de la base de datos.
       res.json({
-        msg: "Asociado eliminado con éxito.", // Si funciona, sale el mensaje
+        msg: "usuario eliminado con éxito.", // Si funciona, sale el mensaje
       });
     } else {
       res.status(404).json({
-        msg: "No se encontró el asociado.",
+        msg: "No se encontró el usuario.",
       });
     }
   } catch (error) {
@@ -167,59 +152,4 @@ const userDelete = async (req, res = response) => {
   }
 };
 
-const userShow = async (req, res = response) => {
-  const { pk } = req.query; // obtiene el id del usuario de los parámetros de la solicitud
-
-  try {
-    const users = await User.findByPk(pk, {
-      attributes: ["pk_user", "name_user",
-      "user",
-      "password",
-      "email",
-      "phone",
-      "pk_role"],
-    }); // busca el usuario en la base de datos por su id
-
-    if (!users) {
-      return res
-        .status(404)
-        .json({ msg: `El usuario con id ${pk} no existe en la base de datos` });
-    }
-
-    return res.json({ users }); // envía el usuario encontrado como respuesta
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Error no controlado" });
-  }
-};
-
-const obtenerUsersDoctor = async (req = request, res = response) => {
-  const { pk_user, name_user } = req.user;
-
-  try {
-    const doctor = await User.findAll({
-      where: {
-        pk_rol: 2
-      },
-
-      attributes: ["pk_user", "name_user"],
-    });
-
-    res.json({
-      doctor,
-      user: { pk_user, name_user }
-    });
-
-  } catch (error) {
-    res.status(500).json({ msg: "Error no controlado" });
-  }
-};
-
-export {
-  userGet,
-  userPost,
-  userPut,
-  userDelete,
-  userShow,
-  obtenerUsersDoctor
-};
+export { userGet, userPost, userPut, userDelete };

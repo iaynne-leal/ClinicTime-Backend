@@ -1,10 +1,10 @@
 import { response, request } from "express";
-import { Patient } from "../models/Patient";
+import { Patient } from "../models/Patient.js";
 import { Op } from "sequelize";
 
 //controlador
 const patientGet = async (req = request, res = response) => {
-  let { search, pagina = 1, limite = 5 } = req.query;
+  let { search, pagina = 1, limite = 50 } = req.query;
 
   const pageAsNumber = Number.parseInt(pagina);
   const limitAsNumber = Number.parseInt(limite);
@@ -14,10 +14,10 @@ const patientGet = async (req = request, res = response) => {
     page = pageAsNumber;
   }
 
-  let size = 5;
+/*   let size = 5;
   if (!Number.isNaN(limitAsNumber) && limitAsNumber > 0 && limitAsNumber < 6) {
     size = limitAsNumber;
-  }
+  } */
 
   if (search === undefined) {
     search = "";
@@ -27,8 +27,8 @@ const patientGet = async (req = request, res = response) => {
 
   try {
     const patients = await Patient.findAll({
-      limit: size,
-      offset: size * (page - 1),
+      limit: limite,
+      offset: limite * (page - 1),
 
       where: {
         name: {
@@ -36,7 +36,7 @@ const patientGet = async (req = request, res = response) => {
         }
       },
       attributes: ["pk_patient", "name",
-      "birthday",
+      "birthdate",
       "email",
       "cod_patient",
       "dpi",
@@ -56,9 +56,10 @@ const patientGet = async (req = request, res = response) => {
     res.json({
       patients,
       cantidad: count,
-      totalPaginas: Math.ceil(count/size)
+      totalPaginas: Math.ceil(count/limite)
     });
   } catch (error) {
+    console.log("jhonatan:", error)
     res.status(500).json({ msg: "Error no controlado" });
   }
 };
@@ -67,7 +68,7 @@ const patientPost = async (req, res = response) => {
   //const body = req.body;
   const {
     name,
-    birthday,
+    birthdate,
     email,
     cod_patient,
     dpi,
@@ -76,9 +77,9 @@ const patientPost = async (req, res = response) => {
   } = req.body;
 
   try {
-    const patient = new Patient({
+    const patients = new Patient({
     name,
-    birthday,
+    birthdate,
     email,
     cod_patient,
     dpi,
@@ -87,10 +88,10 @@ const patientPost = async (req, res = response) => {
     });
 
     //guardar paciente en la BD
-    await patient.save();
+    await patients.save();
     res.json({
       msg: "paciente creado correctamente",
-      patient,
+      patients,
     });
   } catch (error) {
     res.status(500).json({
@@ -104,7 +105,7 @@ const patientPut = async (req = request, res = response) => {
   const pk = req.params.pk;
   const {
     name,
-    birthday,
+    birthdate,
     email,
     cod_patient,
     dpi,
@@ -112,20 +113,20 @@ const patientPut = async (req = request, res = response) => {
   } = req.body;
 
   try {
-    // Busca el asociado por su id
+    // Busca del paciente por su id
     const patient = await Patient.findByPk(pk);
 
     if (!patient) {
       return res.status(404).json({
-        msg: "No se encontró el usuario.",
+        msg: "No se encontró el paciente.",
       });
     }
 
-    // Actualiza la información del asociado con el método update
+    // Actualiza la información del paciente con el método update
 
     await patient.update({
     name,
-    birthday,
+    birthdate,
     email,
     cod_patient,
     dpi,
@@ -133,12 +134,12 @@ const patientPut = async (req = request, res = response) => {
     });
 
     res.json({
-      msg: "Asociado actualizado",
+      msg: "Paciente actualizado",
       patient,
     });
   } catch (error) {
     res.status(500).json({
-      msg: "Ocurrió un error al intentar actualizar el usuario.",
+      msg: "Ocurrió un error al intentar actualizar el Paciente.",
       error,
     });
   }

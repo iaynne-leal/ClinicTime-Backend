@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import { Role } from "../models/Role.js";
 
 const roleGet = async (req = request, res = response) => {
-  let { search, pagina = 1, limite = 5 } = req.query;
+  let { search, pagina = 1, limite = 50 } = req.query;
 
   const pageAsNumber = Number.parseInt(pagina);
   const limitAsNumber = Number.parseInt(limite);
@@ -14,7 +14,7 @@ const roleGet = async (req = request, res = response) => {
   }
 
   let size = 5;
-  if (!Number.isNaN(limitAsNumber) && limitAsNumber > 0 && limitAsNumber < 6) {
+  if (!Number.isNaN(limitAsNumber) && limitAsNumber > -1 ) {
     size = limitAsNumber;
   }
 
@@ -76,7 +76,7 @@ const roleGet = async (req = request, res = response) => {
       totalPaginas: Math.ceil(count/size)
     });
   } catch (error) {
-    res.status(500).json({ msg: "Error no control", error });
+    res.status(500).json({ msg: "Error no controlado", error });
   }
 };
 
@@ -118,7 +118,7 @@ const rolePut = async (req = request, res = response) => {
 
     if (!roles) {
       return res.status(404).json({
-        msg: "No se encontró el usuario.",
+        msg: "No se encontró el rol.",
       });
     }
 
@@ -130,12 +130,12 @@ const rolePut = async (req = request, res = response) => {
     });
 
     res.json({
-      msg: "Usuario actualizado",
+      msg: "rol actualizado",
       roles,
     });
   } catch (error) {
     res.status(500).json({
-      msg: "Ocurrió un error al intentar actualizar el usuario.",
+      msg: "Ocurrió un error al intentar actualizar el rol.",
       error,
     });
   }
@@ -149,16 +149,16 @@ const roleDelete = async (req, res = response) => {
       // Si se encontró el asociado, procede a eliminarlo.
       await roles.destroy(); // Utiliza el método destroy para eliminar el usuario de la base de datos.
       res.json({
-        msg: "Asociado eliminado con éxito.", // Si funciona, sale el mensaje
+        msg: " Rol eliminado con éxito.", // Si funciona, sale el mensaje
       });
     } else {
       res.status(404).json({
-        msg: "No se encontró el asociado.",
+        msg: "No se encontró el rol.",
       });
     }
   } catch (error) {
     res.status(500).json({
-      msg: "Ocurrió un error al intentar eliminar el usuario.",
+      msg: "Ocurrió un error al intentar eliminar el rol.",
       error,
     });
   }

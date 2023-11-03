@@ -154,16 +154,16 @@ const livingDelete = async (req, res = response) => {
       // Si se encontró el asociado, procede a eliminarlo.
       await living.destroy(); // Utiliza el método destroy para eliminar el usuario de la base de datos.
       res.json({
-        msg: "Paciente eliminado con éxito.", // Si funciona, sale el mensaje
+        msg: "vivienda eliminado con éxito.", // Si funciona, sale el mensaje
       });
     } else {
       res.status(404).json({
-        msg: "No se encontró al paciente.",
+        msg: "No se encontró niguna vivienda.",
       });
     }
   } catch (error) {
     res.status(500).json({
-      msg: "Ocurrió un error al intentar eliminar el usuario.",
+      msg: "Ocurrió un error al intentar eliminar la vivienda.",
       error,
     });
   }
